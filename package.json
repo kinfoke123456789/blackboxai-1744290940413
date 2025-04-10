@@ -1,0 +1,20 @@
+{
+  "name": "solana-mev-bot-ui",
+  "version": "1.0.0",
+  "description": "Production UI for Solana MEV Bot",
+  "scripts": {
+    "build:css": "tailwindcss -i ./src/styles/input.css -o ./dist/styles.css --minify",
+    "watch:css": "tailwindcss -i ./src/styles/input.css -o ./dist/styles.css --watch",
+    "build": "npm run build:css",
+    "dev": "npm run watch:css"
+  },
+  "dependencies": {
+    "chart.js": "^4.4.0",
+    "@solana/web3.js": "^1.87.1"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.3.3",
+    "autoprefixer": "^10.4.16",
+    "postcss": "^8.4.31"
+  }
+}
