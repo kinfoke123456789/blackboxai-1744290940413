@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solana MEV Bot Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Orbitron:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/@solana/web3.js@latest/lib/index.iife.min.js"></script>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <style>
+        .neon-border {
+            box-shadow: 0 0 10px #14F195, 0 0 20px #14F195, 0 0 30px #14F195;
+        }
+        .neon-text {
+            text-shadow: 0 0 10px #14F195;
+        }
+        .cyberpunk-card {
+            background: rgba(30, 30, 30, 0.9);
+            border: 1px solid #14F195;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+        .cyberpunk-card:hover {
+            box-shadow: 0 0 15px #14F195;
+            transform: translateY(-5px);
+        }
+        .glow-effect {
+            position: relative;
+            overflow: hidden;
+        }
+        .glow-effect::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(20, 241, 149, 0.1) 0%, transparent 70%);
+            animation: rotate 10s linear infinite;
+        }
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .stat-value {
+            font-family: 'Orbitron', sans-serif;
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        orbitron: ['Orbitron', 'sans-serif'],
+                    },
+                    colors: {
+                        'solana': '#14F195',
+                        'solana-dark': '#0E9F63',
+                        'cyber-black': '#1E1E1E',
+                        'neon-blue': '#00F0FF',
+                        'neon-purple': '#FF00FF',
+                    }
+                }
+            }
+        }
+
+        // Wallet connection state
+        let wallet = null;
+        let publicKey = null;
+
+        // Check if Phantom is installed
+        const isPhantomInstalled = window.solana && window.solana.isPhantom;
+
+        async function getWalletBalance() {
+            try {
+                const connection = new solanaWeb3.Connection("https://api.mainnet-beta.solana.com");
+                const balance = await connection.getBalance(new solanaWeb3.PublicKey(publicKey));
+                return (balance / solanaWeb3.LAMPORTS_PER_SOL).toFixed(2);
+            } catch (err) {
+                console.error("Error fetching balance:", err);
+                return "0.00";
+            }
+        }
+
+        async function connectWallet() {
+            try {
+                if (!isPhantomInstalled) {
+                    alert("Please install Phantom wallet!");
+                    window.open("https://phantom.app/", "_blank");
+                    return;
+                }
+
+                const resp = await window.solana.connect();
+                publicKey = resp.publicKey.toString();
+                wallet = window.solana;
+                
+                // Get and display balance
+                const balance = await getWalletBalance();
+                
+                // Update UI
+                document.getElementById('walletBtn').innerHTML = `
+                    <div class="flex flex-col items-center">
+                        <div class="flex items-center">
+                            <i class="fas fa-wallet mr-2"></i>
+                            ${publicKey.slice(0, 4)}...${publicKey.slice(-4)}
+                        </div>
+                        <div class="text-sm mt-1">${balance} SOL</div>
+                    </div>
+                `;
+                document.getElementById('walletBtn').classList.remove('bg-blue-500', 'hover:bg-blue-600');
+                document.getElementById('walletBtn').classList.add('bg-green-500', 'hover:bg-green-600', 'neon-border');
+                
+                // Enable bot controls
+                document.getElementById('startBot').disabled = false;
+                document.getElementById('startBot').classList.remove('opacity-50', 'cursor-not-allowed');
+
+                // Initialize charts
+                initializeCharts();
+            } catch (err) {
+                console.error(err);
+                alert("Failed to connect wallet!");
+            }
+        }
+
+        function initializeCharts() {
+            // Profit History Chart
+            const profitCtx = document.getElementById('profitChart').getContext('2d');
+            new Chart(profitCtx, {
+                type: 'line',
+                data: {
+                    labels: ['1h', '2h', '3h', '4h', '5h', '6h'],
+                    datasets: [{
+                        label: 'Profit (SOL)',
+                        data: [0, 0.1, 0.15, 0.2, 0.18, 0.25],
+                        borderColor: '#14F195',
+                        backgroundColor: 'rgba(20, 241, 149, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: '#888'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: '#888'
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Markets Distribution Chart
+            const marketsCtx = document.getElementById('marketsChart').getContext('2d');
+            new Chart(marketsCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Raydium', 'Orca', 'Meteora'],
+                    datasets: [{
+                        data: [40, 35, 25],
+                        backgroundColor: ['#14F195', '#00F0FF', '#FF00FF'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: {
+                                color: '#888'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+</head>
+<body class="bg-cyber-black font-sans text-white">
+    <div class="min-h-screen flex">
+        <!-- Sidebar -->
+        <aside class="fixed top-0 left-0 h-screen w-64 bg-cyber-black border-r border-solana">
+            <div class="p-6">
+                <h1 class="text-xl font-orbitron font-bold flex items-center space-x-3 neon-text">
+                    <i class="fas fa-robot text-solana"></i>
+                    <span>Solana MEV Bot</span>
+                </h1>
+            </div>
+            <nav class="mt-8">
+                <a href="#" class="flex items-center px-6 py-3 bg-black bg-opacity-20 border-l-4 border-solana">
+                    <i class="fas fa-chart-line w-5"></i>
+                    <span class="ml-3">Dashboard</span>
+                </a>
+                <a href="#" class="flex items-center px-6 py-3 hover:bg-black hover:bg-opacity-20 transition-colors duration-200">
+                    <i class="fas fa-exchange-alt w-5"></i>
+                    <span class="ml-3">Active Markets</span>
+                </a>
+                <a href="#" class="flex items-center px-6 py-3 hover:bg-black hover:bg-opacity-20 transition-colors duration-200">
+                    <i class="fas fa-history w-5"></i>
+                    <span class="ml-3">Transaction History</span>
+                </a>
+                <a href="#" class="flex items-center px-6 py-3 hover:bg-black hover:bg-opacity-20 transition-colors duration-200">
+                    <i class="fas fa-cog w-5"></i>
+                    <span class="ml-3">Settings</span>
+                </a>
+            </nav>
+            <div class="absolute bottom-0 left-0 right-0 p-6">
+                <div class="flex items-center space-x-2 text-sm text-gray-400">
+                    <i class="fas fa-circle text-solana animate-pulse"></i>
+                    <span>Connected to Mainnet</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="ml-64 flex-1 p-8">
+            <!-- Header -->
+            <div class="flex justify-between items-center mb-8">
+                <div>
+                    <h2 class="text-2xl font-orbitron font-bold text-white neon-text">Dashboard</h2>
+                    <p class="text-gray-400 mt-1">Monitor your bot's performance</p>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button id="walletBtn" onclick="connectWallet()" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg flex items-center transition-all duration-200">
+                        <i class="fas fa-wallet mr-2"></i>
+                        Connect Wallet
+                    </button>
+                    <button id="startBot" disabled class="cyberpunk-card bg-solana hover:bg-solana-dark text-white px-6 py-3 rounded-lg flex items-center transition-all duration-200 opacity-50 cursor-not-allowed">
+                        <i class="fas fa-play mr-2"></i>
+                        Start Bot
+                    </button>
+                    <button id="stopBot" class="cyberpunk-card bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg flex items-center transition-all duration-200" disabled>
+                        <i class="fas fa-stop mr-2"></i>
+                        Stop Bot
+                    </button>
+                </div>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="cyberpunk-card p-6 rounded-xl glow-effect">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-gray-400 text-sm font-medium">Total Profit</h3>
+                        <div class="w-10 h-10 bg-solana bg-opacity-20 rounded-full flex items-center justify-center">
+                            <i class="fas fa-dollar-sign text-solana"></i>
+                        </div>
+                    </div>
+                    <p class="text-3xl font-bold text-white mt-4 stat-value neon-text">0.00 SOL</p>
+                    <div class="flex items-center mt-2 text-sm">
+                        <i class="fas fa-arrow-up text-solana mr-1"></i>
+                        <span class="text-solana">+0.00%</span>
+                        <span class="text-gray-400 ml-1">from yesterday</span>
+                    </div>
+                </div>
+                <div class="cyberpunk-card p-6 rounded-xl glow-effect">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-gray-400 text-sm font-medium">Active Pools</h3>
+                        <div class="w-10 h-10 bg-neon-blue bg-opacity-20 rounded-full flex items-center justify-center">
+                            <i class="fas fa-water text-neon-blue"></i>
+                        </div>
+                    </div>
+                    <p class="text-3xl font-bold text-white mt-4 stat-value neon-text">0</p>
+                    <p class="text-sm text-gray-400 mt-2">Across 3 DEXes</p>
+                </div>
+                <div class="cyberpunk-card p-6 rounded-xl glow-effect">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-gray-400 text-sm font-medium">Success Rate</h3>
+                        <div class="w-10 h-10 bg-neon-purple bg-opacity-20 rounded-full flex items-center justify-center">
+                            <i class="fas fa-chart-pie text-neon-purple"></i>
+                        </div>
+                    </div>
+                    <p class="text-3xl font-bold text-white mt-4 stat-value neon-text">0%</p>
+                    <p class="text-sm text-gray-400 mt-2">Last 24 hours</p>
+                </div>
+                <div class="cyberpunk-card p-6 rounded-xl glow-effect">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-gray-400 text-sm font-medium">Gas Spent</h3>
+                        <div class="w-10 h-10 bg-orange-500 bg-opacity-20 rounded-full flex items-center justify-center">
+                            <i class="fas fa-gas-pump text-orange-500"></i>
+                        </div>
+                    </div>
+                    <p class="text-3xl font-bold text-white mt-4 stat-value neon-text">0.00 SOL</p>
+                    <p class="text-sm text-gray-400 mt-2">Last 24 hours</p>
+                </div>
+            </div>
+
+            <!-- Charts Section -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                <div class="cyberpunk-card p-6 rounded-xl">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-lg font-orbitron font-semibold text-white">Profit History</h3>
+                        <div class="flex items-center space-x-2">
+                            <button class="px-3 py-1 text-sm bg-solana bg-opacity-20 rounded-md hover:bg-opacity-30 transition-colors">24h</button>
+                            <button class="px-3 py-1 text-sm bg-solana bg-opacity-20 rounded-md hover:bg-opacity-30 transition-colors">7d</button>
+                            <button class="px-3 py-1 text-sm bg-solana bg-opacity-20 rounded-md hover:bg-opacity-30 transition-colors">30d</button>
+                        </div>
+                    </div>
+                    <canvas id="profitChart" class="h-64"></canvas>
+                </div>
+                <div class="cyberpunk-card p-6 rounded-xl">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-lg font-orbitron font-semibold text-white">Active Markets</h3>
+                        <button class="text-sm text-gray-400 hover:text-white transition-colors">
+                            <i class="fas fa-sync-alt mr-1"></i>
+                            Refresh
+                        </button>
+                    </div>
+                    <canvas id="marketsChart" class="h-64"></canvas>
+                </div>
+            </div>
+
+            <!-- Recent Transactions -->
+            <div class="cyberpunk-card p-6 rounded-xl">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-lg font-orbitron font-semibold text-white">Recent Transactions</h3>
+                    <button class="text-sm text-gray-400 hover:text-white transition-colors">View All</button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full">
+                        <thead>
+                            <tr class="border-b border-gray-800">
+                                <th class="text-left py-3 px-4 text-sm font-semibold text-gray-400">Time</th>
+                                <th class="text-left py-3 px-4 text-sm font-semibold text-gray-400">Type</th>
+                                <th class="text-left py-3 px-4 text-sm font-semibold text-gray-400">Route</th>
+                                <th class="text-left py-3 px-4 text-sm font-semibold text-gray-400">Amount</th>
+                                <th class="text-left py-3 px-4 text-sm font-semibold text-gray-400">Profit</th>
+                                <th class="text-left py-3 px-4 text-sm font-semibold text-gray-400">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="text-gray-400 text-center">
+                                <td colspan="6" class="py-8">
+                                    <div class="flex flex-col items-center">
+                                        <i class="fas fa-inbox text-3xl mb-2 text-solana"></i>
+                                        <p>No transactions yet</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Basic interactivity for the start/stop buttons
+        const startBtn = document.getElementById('startBot');
+        const stopBtn = document.getElementById('stopBot');
+
+        startBtn.addEventListener('click', () => {
+            startBtn.disabled = true;
+            stopBtn.disabled = false;
+            startBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            stopBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        });
+
+        stopBtn.addEventListener('click', () => {
+            stopBtn.disabled = true;
+            startBtn.disabled = false;
+            stopBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            startBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        });
+    </script>
+</body>
+</html>
