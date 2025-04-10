@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transaction History - Solana MEV Bot</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Orbitron:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <style>
+        .neon-border { box-shadow: 0 0 10px #14F195, 0 0 20px #14F195, 0 0 30px #14F195; }
+        .neon-text { text-shadow: 0 0 10px #14F195; }
+        .cyberpunk-card {
+            background: rgba(30, 30, 30, 0.9);
+            border: 1px solid #14F195;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+        .cyberpunk-card:hover {
+            box-shadow: 0 0 15px #14F195;
+            transform: translateY(-5px);
+        }
+    </style>
+</head>
+<body class="bg-[#1E1E1E] font-sans text-white">
+    <div class="min-h-screen flex">
+        <!-- Sidebar -->
+        <aside class="fixed top-0 left-0 h-screen w-64 bg-[#1E1E1E] border-r border-[#14F195]">
+            <div class="p-6">
+                <h1 class="text-xl font-orbitron font-bold flex items-center space-x-3 neon-text">
+                    <i class="fas fa-robot text-[#14F195]"></i>
+                    <span>Solana MEV Bot</span>
+                </h1>
+            </div>
+            <nav class="mt-8">
+                <a href="index.html" class="flex items-center px-6 py-3 hover:bg-black hover:bg-opacity-20 transition-colors duration-200">
+                    <i class="fas fa-chart-line w-5"></i>
+                    <span class="ml-3">Dashboard</span>
+                </a>
+                <a href="markets.html" class="flex items-center px-6 py-3 hover:bg-black hover:bg-opacity-20 transition-colors duration-200">
+                    <i class="fas fa-exchange-alt w-5"></i>
+                    <span class="ml-3">Active Markets</span>
+                </a>
+                <a href="transactions.html" class="flex items-center px-6 py-3 bg-black bg-opacity-20 border-l-4 border-[#14F195]">
+                    <i class="fas fa-history w-5"></i>
+                    <span class="ml-3">Transaction History</span>
+                </a>
+                <a href="settings.html" class="flex items-center px-6 py-3 hover:bg-black hover:bg-opacity-20 transition-colors duration-200">
+                    <i class="fas fa-cog w-5"></i>
+                    <span class="ml-3">Settings</span>
+                </a>
+            </nav>
+            <div class="absolute bottom-0 left-0 right-0 p-6">
+                <div class="flex items-center space-x-2 text-sm text-gray-400">
+                    <i class="fas fa-circle text-[#14F195] animate-pulse"></i>
+                    <span>Connected to Mainnet</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="ml-64 flex-1 p-8">
+            <div class="flex justify-between items-center mb-8">
+                <div>
+                    <h2 class="text-2xl font-orbitron font-bold text-white neon-text">Transaction History</h2>
+                    <p class="text-gray-400 mt-1">View all bot transactions and their status</p>
+                </div>
+                <div class="flex space-x-4">
+                    <button class="px-4 py-2 bg-[#14F195] bg-opacity-20 rounded-lg hover:bg-opacity-30 transition-colors">
+                        <i class="fas fa-download mr-2"></i>
+                        Export CSV
+                    </button>
+                    <button class="px-4 py-2 bg-[#14F195] bg-opacity-20 rounded-lg hover:bg-opacity-30 transition-colors">
+                        <i class="fas fa-filter mr-2"></i>
+                        Filter
+                    </button>
+                </div>
+            </div>
+
+            <!-- Transaction Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="cyberpunk-card p-6 rounded-xl">
+                    <h3 class="text-sm text-gray-400">Total Transactions</h3>
+                    <p class="text-2xl font-orbitron mt-2">1,234</p>
+                </div>
+                <div class="cyberpunk-card p-6 rounded-xl">
+                    <h3 class="text-sm text-gray-400">Success Rate</h3>
+                    <p class="text-2xl font-orbitron mt-2 text-[#14F195]">98.5%</p>
+                </div>
+                <div class="cyberpunk-card p-6 rounded-xl">
+                    <h3 class="text-sm text-gray-400">Average Profit</h3>
+                    <p class="text-2xl font-orbitron mt-2">0.05 SOL</p>
+                </div>
+                <div class="cyberpunk-card p-6 rounded-xl">
+                    <h3 class="text-sm text-gray-400">Total Volume</h3>
+                    <p class="text-2xl font-orbitron mt-2">5,678 SOL</p>
+                </div>
+            </div>
+
+            <!-- Transaction Table -->
+            <div class="cyberpunk-card rounded-xl overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full">
+                        <thead>
+                            <tr class="bg-black bg-opacity-40">
+                                <th class="text-left py-4 px-6 text-sm font-semibold text-gray-400">Time</th>
+                                <th class="text-left py-4 px-6 text-sm font-semibold text-gray-400">Type</th>
+                                <th class="text-left py-4 px-6 text-sm font-semibold text-gray-400">Route</th>
+                                <th class="text-left py-4 px-6 text-sm font-semibold text-gray-400">Amount</th>
+                                <th class="text-left py-4 px-6 text-sm font-semibold text-gray-400">Profit</th>
+                                <th class="text-left py-4 px-6 text-sm font-semibold text-gray-400">Status</th>
+                                <th class="text-left py-4 px-6 text-sm font-semibold text-gray-400">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-800">
+                            <tr class="hover:bg-black hover:bg-opacity-20">
+                                <td class="py-4 px-6">2023-04-10 12:34:56</td>
+                                <td class="py-4 px-6">Arbitrage</td>
+                                <td class="py-4 px-6">Raydium → Orca</td>
+                                <td class="py-4 px-6">10.5 SOL</td>
+                                <td class="py-4 px-6 text-[#14F195]">+0.08 SOL</td>
+                                <td class="py-4 px-6">
+                                    <span class="px-2 py-1 bg-green-500 bg-opacity-20 text-green-500 rounded-full text-sm">
+                                        Success
+                                    </span>
+                                </td>
+                                <td class="py-4 px-6">
+                                    <button class="text-gray-400 hover:text-white">
+                                        <i class="fas fa-external-link-alt"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-black hover:bg-opacity-20">
+                                <td class="py-4 px-6">2023-04-10 12:32:21</td>
+                                <td class="py-4 px-6">Arbitrage</td>
+                                <td class="py-4 px-6">Meteora → Raydium</td>
+                                <td class="py-4 px-6">5.2 SOL</td>
+                                <td class="py-4 px-6 text-[#14F195]">+0.03 SOL</td>
+                                <td class="py-4 px-6">
+                                    <span class="px-2 py-1 bg-green-500 bg-opacity-20 text-green-500 rounded-full text-sm">
+                                        Success
+                                    </span>
+                                </td>
+                                <td class="py-4 px-6">
+                                    <button class="text-gray-400 hover:text-white">
+                                        <i class="fas fa-external-link-alt"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-black hover:bg-opacity-20">
+                                <td class="py-4 px-6">2023-04-10 12:30:15</td>
+                                <td class="py-4 px-6">Arbitrage</td>
+                                <td class="py-4 px-6">Orca → Meteora</td>
+                                <td class="py-4 px-6">8.7 SOL</td>
+                                <td class="py-4 px-6 text-red-500">-0.02 SOL</td>
+                                <td class="py-4 px-6">
+                                    <span class="px-2 py-1 bg-red-500 bg-opacity-20 text-red-500 rounded-full text-sm">
+                                        Failed
+                                    </span>
+                                </td>
+                                <td class="py-4 px-6">
+                                    <button class="text-gray-400 hover:text-white">
+                                        <i class="fas fa-external-link-alt"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <!-- Pagination -->
+                <div class="flex items-center justify-between p-6 border-t border-gray-800">
+                    <div class="text-sm text-gray-400">
+                        Showing 1-3 of 1,234 transactions
+                    </div>
+                    <div class="flex space-x-2">
+                        <button class="px-3 py-1 bg-[#14F195] bg-opacity-20 rounded hover:bg-opacity-30 transition-colors">
+                            Previous
+                        </button>
+                        <button class="px-3 py-1 bg-[#14F195] bg-opacity-20 rounded hover:bg-opacity-30 transition-colors">
+                            Next
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
