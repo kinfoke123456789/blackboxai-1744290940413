@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Active Markets - Solana MEV Bot</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Orbitron:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <style>
+        .neon-border { box-shadow: 0 0 10px #14F195, 0 0 20px #14F195, 0 0 30px #14F195; }
+        .neon-text { text-shadow: 0 0 10px #14F195; }
+        .cyberpunk-card {
+            background: rgba(30, 30, 30, 0.9);
+            border: 1px solid #14F195;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+        .cyberpunk-card:hover {
+            box-shadow: 0 0 15px #14F195;
+            transform: translateY(-5px);
+        }
+    </style>
+</head>
+<body class="bg-cyber-black font-sans text-white">
+    <div class="min-h-screen flex">
+        <!-- Sidebar -->
+        <aside class="fixed top-0 left-0 h-screen w-64 bg-[#1E1E1E] border-r border-solana">
+            <div class="p-6">
+                <h1 class="text-xl font-orbitron font-bold flex items-center space-x-3 neon-text">
+                    <i class="fas fa-robot text-[#14F195]"></i>
+                    <span>Solana MEV Bot</span>
+                </h1>
+            </div>
+            <nav class="mt-8">
+                <a href="index.html" class="flex items-center px-6 py-3 hover:bg-black hover:bg-opacity-20 transition-colors duration-200">
+                    <i class="fas fa-chart-line w-5"></i>
+                    <span class="ml-3">Dashboard</span>
+                </a>
+                <a href="markets.html" class="flex items-center px-6 py-3 bg-black bg-opacity-20 border-l-4 border-[#14F195]">
+                    <i class="fas fa-exchange-alt w-5"></i>
+                    <span class="ml-3">Active Markets</span>
+                </a>
+                <a href="transactions.html" class="flex items-center px-6 py-3 hover:bg-black hover:bg-opacity-20 transition-colors duration-200">
+                    <i class="fas fa-history w-5"></i>
+                    <span class="ml-3">Transaction History</span>
+                </a>
+                <a href="settings.html" class="flex items-center px-6 py-3 hover:bg-black hover:bg-opacity-20 transition-colors duration-200">
+                    <i class="fas fa-cog w-5"></i>
+                    <span class="ml-3">Settings</span>
+                </a>
+            </nav>
+            <div class="absolute bottom-0 left-0 right-0 p-6">
+                <div class="flex items-center space-x-2 text-sm text-gray-400">
+                    <i class="fas fa-circle text-[#14F195] animate-pulse"></i>
+                    <span>Connected to Mainnet</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="ml-64 flex-1 p-8">
+            <div class="flex justify-between items-center mb-8">
+                <div>
+                    <h2 class="text-2xl font-orbitron font-bold text-white neon-text">Active Markets</h2>
+                    <p class="text-gray-400 mt-1">Monitor market opportunities and DEX activity</p>
+                </div>
+            </div>
+
+            <!-- Market Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="cyberpunk-card p-6 rounded-xl">
+                    <h3 class="text-lg font-semibold mb-4">Raydium Markets</h3>
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center">
+                            <span>SOL/USDC</span>
+                            <span class="text-[#14F195]">+2.5%</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span>ETH/USDC</span>
+                            <span class="text-red-500">-1.2%</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span>RAY/USDC</span>
+                            <span class="text-[#14F195]">+0.8%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cyberpunk-card p-6 rounded-xl">
+                    <h3 class="text-lg font-semibold mb-4">Orca Markets</h3>
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center">
+                            <span>SOL/USDC</span>
+                            <span class="text-[#14F195]">+2.3%</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span>ORCA/USDC</span>
+                            <span class="text-[#14F195]">+1.5%</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span>mSOL/USDC</span>
+                            <span class="text-red-500">-0.5%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cyberpunk-card p-6 rounded-xl">
+                    <h3 class="text-lg font-semibold mb-4">Meteora Markets</h3>
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center">
+                            <span>SOL/USDC</span>
+                            <span class="text-[#14F195]">+2.4%</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span>BTC/USDC</span>
+                            <span class="text-[#14F195]">+1.8%</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span>MNGO/USDC</span>
+                            <span class="text-red-500">-0.7%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Arbitrage Opportunities -->
+            <div class="cyberpunk-card p-6 rounded-xl mb-8">
+                <h3 class="text-lg font-semibold mb-6">Current Arbitrage Opportunities</h3>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full">
+                        <thead>
+                            <tr class="border-b border-gray-800">
+                                <th class="text-left py-3 px-4">Token Pair</th>
+                                <th class="text-left py-3 px-4">Buy DEX</th>
+                                <th class="text-left py-3 px-4">Sell DEX</th>
+                                <th class="text-left py-3 px-4">Price Diff</th>
+                                <th class="text-left py-3 px-4">Potential Profit</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b border-gray-800">
+                                <td class="py-3 px-4">SOL/USDC</td>
+                                <td class="py-3 px-4">Raydium</td>
+                                <td class="py-3 px-4">Orca</td>
+                                <td class="py-3 px-4 text-[#14F195]">0.15%</td>
+                                <td class="py-3 px-4">~0.05 SOL</td>
+                            </tr>
+                            <tr class="border-b border-gray-800">
+                                <td class="py-3 px-4">ETH/USDC</td>
+                                <td class="py-3 px-4">Meteora</td>
+                                <td class="py-3 px-4">Raydium</td>
+                                <td class="py-3 px-4 text-[#14F195]">0.12%</td>
+                                <td class="py-3 px-4">~0.03 SOL</td>
+                            </tr>
+                            <tr>
+                                <td class="py-3 px-4">RAY/USDC</td>
+                                <td class="py-3 px-4">Orca</td>
+                                <td class="py-3 px-4">Meteora</td>
+                                <td class="py-3 px-4 text-[#14F195]">0.08%</td>
+                                <td class="py-3 px-4">~0.02 SOL</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
