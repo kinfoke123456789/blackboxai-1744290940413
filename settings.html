@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - Solana MEV Bot</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Orbitron:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <style>
+        .neon-border { box-shadow: 0 0 10px #14F195, 0 0 20px #14F195, 0 0 30px #14F195; }
+        .neon-text { text-shadow: 0 0 10px #14F195; }
+        .cyberpunk-card {
+            background: rgba(30, 30, 30, 0.9);
+            border: 1px solid #14F195;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+        .cyberpunk-card:hover {
+            box-shadow: 0 0 15px #14F195;
+            transform: translateY(-5px);
+        }
+        .toggle-switch {
+            width: 3.5rem;
+            height: 2rem;
+            background-color: rgba(20, 241, 149, 0.2);
+            border-radius: 9999px;
+            position: relative;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            top: 0.25rem;
+            left: 0.25rem;
+            width: 1.5rem;
+            height: 1.5rem;
+            background-color: white;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+        }
+        .toggle-switch.active {
+            background-color: #14F195;
+        }
+        .toggle-switch.active::after {
+            transform: translateX(1.5rem);
+        }
+    </style>
+</head>
+<body class="bg-[#1E1E1E] font-sans text-white">
+    <div class="min-h-screen flex">
+        <!-- Sidebar -->
+        <aside class="fixed top-0 left-0 h-screen w-64 bg-[#1E1E1E] border-r border-[#14F195]">
+            <div class="p-6">
+                <h1 class="text-xl font-orbitron font-bold flex items-center space-x-3 neon-text">
+                    <i class="fas fa-robot text-[#14F195]"></i>
+                    <span>Solana MEV Bot</span>
+                </h1>
+            </div>
+            <nav class="mt-8">
+                <a href="index.html" class="flex items-center px-6 py-3 hover:bg-black hover:bg-opacity-20 transition-colors duration-200">
+                    <i class="fas fa-chart-line w-5"></i>
+                    <span class="ml-3">Dashboard</span>
+                </a>
+                <a href="markets.html" class="flex items-center px-6 py-3 hover:bg-black hover:bg-opacity-20 transition-colors duration-200">
+                    <i class="fas fa-exchange-alt w-5"></i>
+                    <span class="ml-3">Active Markets</span>
+                </a>
+                <a href="transactions.html" class="flex items-center px-6 py-3 hover:bg-black hover:bg-opacity-20 transition-colors duration-200">
+                    <i class="fas fa-history w-5"></i>
+                    <span class="ml-3">Transaction History</span>
+                </a>
+                <a href="settings.html" class="flex items-center px-6 py-3 bg-black bg-opacity-20 border-l-4 border-[#14F195]">
+                    <i class="fas fa-cog w-5"></i>
+                    <span class="ml-3">Settings</span>
+                </a>
+            </nav>
+            <div class="absolute bottom-0 left-0 right-0 p-6">
+                <div class="flex items-center space-x-2 text-sm text-gray-400">
+                    <i class="fas fa-circle text-[#14F195] animate-pulse"></i>
+                    <span>Connected to Mainnet</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="ml-64 flex-1 p-8">
+            <div class="flex justify-between items-center mb-8">
+                <div>
+                    <h2 class="text-2xl font-orbitron font-bold text-white neon-text">Settings</h2>
+                    <p class="text-gray-400 mt-1">Configure your bot parameters and preferences</p>
+                </div>
+                <button class="px-6 py-2 bg-[#14F195] text-black rounded-lg hover:bg-opacity-80 transition-colors font-medium">
+                    Save Changes
+                </button>
+            </div>
+
+            <!-- Settings Sections -->
+            <div class="grid grid-cols-1 gap-8">
+                <!-- Trading Parameters -->
+                <div class="cyberpunk-card p-6 rounded-xl">
+                    <h3 class="text-lg font-semibold mb-6">Trading Parameters</h3>
+                    <div class="space-y-6">
+                        <div class="grid grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-400 mb-2">
+                                    Minimum Profit Threshold (SOL)
+                                </label>
+                                <input type="number" class="w-full bg-black bg-opacity-50 border border-gray-700 rounded-lg px-4 py-2 focus:outline-none focus:border-[#14F195]" value="0.01" step="0.01">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-400 mb-2">
+                                    Maximum Transaction Size (SOL)
+                                </label>
+                                <input type="number" class="w-full bg-black bg-opacity-50 border border-gray-700 rounded-lg px-4 py-2 focus:outline-none focus:border-[#14F195]" value="100" step="1">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-400 mb-2">
+                                    Gas Price Limit (SOL)
+                                </label>
+                                <input type="number" class="w-full bg-black bg-opacity-50 border border-gray-700 rounded-lg px-4 py-2 focus:outline-none focus:border-[#14F195]" value="0.000001" step="0.000001">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-400 mb-2">
+                                    Slippage Tolerance (%)
+                                </label>
+                                <input type="number" class="w-full bg-black bg-opacity-50 border border-gray-700 rounded-lg px-4 py-2 focus:outline-none focus:border-[#14F195]" value="1" step="0.1">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DEX Settings -->
+                <div class="cyberpunk-card p-6 rounded-xl">
+                    <h3 class="text-lg font-semibold mb-6">DEX Settings</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h4 class="font-medium">Raydium</h4>
+                                <p class="text-sm text-gray-400">Enable trading on Raydium DEX</p>
+                            </div>
+                            <div class="toggle-switch active" onclick="this.classList.toggle('active')"></div>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h4 class="font-medium">Orca</h4>
+                                <p class="text-sm text-gray-400">Enable trading on Orca DEX</p>
+                            </div>
+                            <div class="toggle-switch active" onclick="this.classList.toggle('active')"></div>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h4 class="font-medium">Meteora</h4>
+                                <p class="text-sm text-gray-400">Enable trading on Meteora DEX</p>
+                            </div>
+                            <div class="toggle-switch active" onclick="this.classList.toggle('active')"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Notification Settings -->
+                <div class="cyberpunk-card p-6 rounded-xl">
+                    <h3 class="text-lg font-semibold mb-6">Notification Settings</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h4 class="font-medium">Success Notifications</h4>
+                                <p class="text-sm text-gray-400">Get notified on successful trades</p>
+                            </div>
+                            <div class="toggle-switch active" onclick="this.classList.toggle('active')"></div>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h4 class="font-medium">Error Notifications</h4>
+                                <p class="text-sm text-gray-400">Get notified on failed trades</p>
+                            </div>
+                            <div class="toggle-switch active" onclick="this.classList.toggle('active')"></div>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h4 class="font-medium">Daily Reports</h4>
+                                <p class="text-sm text-gray-400">Receive daily performance reports</p>
+                            </div>
+                            <div class="toggle-switch active" onclick="this.classList.toggle('active')"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Advanced Settings -->
+                <div class="cyberpunk-card p-6 rounded-xl">
+                    <h3 class="text-lg font-semibold mb-6">Advanced Settings</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-400 mb-2">
+                                RPC Endpoint
+                            </label>
+                            <input type="text" class="w-full bg-black bg-opacity-50 border border-gray-700 rounded-lg px-4 py-2 focus:outline-none focus:border-[#14F195]" value="https://api.mainnet-beta.solana.com">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-400 mb-2">
+                                Backup RPC Endpoint
+                            </label>
+                            <input type="text" class="w-full bg-black bg-opacity-50 border border-gray-700 rounded-lg px-4 py-2 focus:outline-none focus:border-[#14F195]" placeholder="Enter backup RPC endpoint">
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h4 class="font-medium">Debug Mode</h4>
+                                <p class="text-sm text-gray-400">Enable detailed logging</p>
+                            </div>
+                            <div class="toggle-switch" onclick="this.classList.toggle('active')"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
