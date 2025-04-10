@@ -1,0 +1,160 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-cyber-black text-white font-sans antialiased;
+  }
+}
+
+@layer components {
+  .neon-border {
+    @apply shadow-neon;
+  }
+  
+  .neon-text {
+    @apply text-shadow-neon;
+  }
+  
+  .cyberpunk-card {
+    @apply bg-cyber-black bg-opacity-90 border border-solana backdrop-blur-md transition-all duration-300;
+  }
+  
+  .cyberpunk-card:hover {
+    @apply shadow-neon -translate-y-1;
+  }
+
+  .btn {
+    @apply px-6 py-2 rounded-lg transition-all duration-200 font-medium;
+  }
+
+  .btn-primary {
+    @apply bg-solana hover:bg-solana-dark text-black;
+  }
+
+  .btn-secondary {
+    @apply bg-solana bg-opacity-20 hover:bg-opacity-30 text-white;
+  }
+
+  .input-field {
+    @apply w-full bg-black bg-opacity-50 border border-gray-700 rounded-lg px-4 py-2 focus:outline-none focus:border-solana;
+  }
+
+  .toggle-switch {
+    @apply w-14 h-8 bg-solana bg-opacity-20 rounded-full relative cursor-pointer transition-colors duration-300;
+  }
+
+  .toggle-switch::after {
+    content: '';
+    @apply absolute top-1 left-1 w-6 h-6 bg-white rounded-full transition-transform duration-300;
+  }
+
+  .toggle-switch.active {
+    @apply bg-solana;
+  }
+
+  .toggle-switch.active::after {
+    @apply translate-x-6;
+  }
+}
+
+@layer utilities {
+  .loading-spinner {
+    @apply w-8 h-8 border-4 border-solana border-t-transparent rounded-full animate-spin;
+  }
+
+  .error-message {
+    @apply bg-red-500 bg-opacity-20 text-red-500 px-4 py-2 rounded-lg flex items-center;
+  }
+
+  .success-message {
+    @apply bg-green-500 bg-opacity-20 text-green-500 px-4 py-2 rounded-lg flex items-center;
+  }
+}
+
+/* Animations */
+@keyframes glow {
+  0%, 100% {
+    @apply opacity-100;
+  }
+  50% {
+    @apply opacity-70;
+  }
+}
+
+.animate-glow {
+  animation: glow 2s ease-in-out infinite;
+}
+
+/* Chart Styles */
+.chart-container {
+  @apply relative w-full h-64;
+}
+
+.chart-container canvas {
+  @apply !w-full !h-full;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  @apply w-2;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-cyber-black;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-solana bg-opacity-50 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-opacity-70;
+}
+
+/* Loading Overlay */
+.loading-overlay {
+  @apply fixed inset-0 bg-cyber-black bg-opacity-80 backdrop-blur-sm flex items-center justify-center z-50;
+}
+
+/* Toast Notifications */
+.toast {
+  @apply fixed bottom-4 right-4 px-6 py-3 rounded-lg shadow-lg transform transition-all duration-300 z-50;
+}
+
+.toast-success {
+  @apply bg-solana text-black;
+}
+
+.toast-error {
+  @apply bg-red-500 text-white;
+}
+
+/* Modal */
+.modal {
+  @apply fixed inset-0 bg-cyber-black bg-opacity-80 backdrop-blur-sm flex items-center justify-center z-50;
+}
+
+.modal-content {
+  @apply bg-cyber-black border border-solana rounded-xl p-6 max-w-lg w-full mx-4 transform transition-all duration-300;
+}
+
+/* Responsive Typography */
+@screen sm {
+  .text-responsive {
+    @apply text-sm;
+  }
+}
+
+@screen md {
+  .text-responsive {
+    @apply text-base;
+  }
+}
+
+@screen lg {
+  .text-responsive {
+    @apply text-lg;
+  }
+}
